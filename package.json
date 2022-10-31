@@ -18,16 +18,15 @@
   },
   "homepage": "https://github.com/Dcastro99/todo-app-server#readme",
   "dependencies": {
-    "auth0": "^2.44.0",
     "@auth0/auth0-react": "^1.11.0",
+    "auth0": "^2.44.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jest": "^29.2.2",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.1.4",
-    "mongoose": "^6.7.0",
-    "nodemon": "^2.0.20"
+    "mongoose": "^6.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",
