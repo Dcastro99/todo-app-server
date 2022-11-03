@@ -46,12 +46,12 @@ const USER = require('./src/models/user');
 
 app.get('/', handleGetAlltodos);
 
-app.use(verifyUser);
 
 //------TODO ENDPOINTS ------ //
 app.post('/todo', handlePostTodo);
 app.delete('/todo/:id', handleDeleteTodo)
-// app.get('/userList', handleGetsssUsers);
+app.put('/todo/:id', handleUpdateTodo);
+app.use(verifyUser);
 
 //------USER ENDPOINTS ------ //
 app.post('/user', async (req, res) => {
@@ -79,21 +79,21 @@ async function handleGetAlltodos(req, res) {
 
 
 async function handlePostTodo(req, res) {
-  console.log('HERE WE Go', req.body)
+  console.log('STUFF INSIDE!!', req.body)
   try {
-    if (!req.text && req.assignee) {
-      res.status(200).send('task already in system');
-    } else {
-      const newTodo = await TODO.create({ ...req.body });
-      res.status(200).send(newTodo);
+    const findTodo = await TODO.findOne({ ...req.body, text: req.body.text, assignee: req.body.assignee });
+    if (!findTodo) {
+      const newTodo = await TODO.create({ ...req.body, text: req.body.text, assignee: req.body.assignee });
     }
-  } catch (e) {
-    res.status(500).send('server error');
+
+    res.status(204).send("Todo was succussfully added");
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
 async function handleDeleteTodo(req, res) {
-  console.log('DELETE ME', req.params)
+  console.log('DELETED::', req.params)
   const { id } = req.params;
   try {
     const todo = await TODO.findOne({ _id: id });
@@ -108,19 +108,24 @@ async function handleDeleteTodo(req, res) {
 }
 
 
+async function handleUpdateTodo(req, res) {
+  console.log('UPDATED!!::', req.params)
+  try {
+    const updateTODO = await TODO.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.status(200).send(updateTODO);
+  } catch (e) {
+    res.status(500).send('servere error');
+  }
+}
+
+
 //----------------- USER CRUD -------------------//
 
-// async function handleGetsssUsers(req, res) {
-//   try {
-//     const users = await USER.find();
-//     res.status(200).send(users);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).send("Could not find users");
-//   }
-// }
 
-// ADMIN = 3, EDITOR = 2, WRITER = 1, GUEST = 0
+
+// ROLES FOR USERS
 const roles = {
   admin: ['create', 'read', 'update', 'delete'],
   editor: ['read', 'update', 'delete'],
@@ -147,12 +152,10 @@ async function handleGetUser(search) {
       userType: roles.guest
     }
     const newUser = await USER.create({ ...userData })
-    // res.status(200).send('user created!')
 
     console.log('pleaseOhplease', newUser)
 
     return { username: newUser.userName, userType: newUser.userType }
-    // console.log('user created!', newUser);
   } else {
 
     console.log('AAAHHH', userDatabase)
