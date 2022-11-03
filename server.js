@@ -46,12 +46,12 @@ const USER = require('./src/models/user');
 
 app.get('/', handleGetAlltodos);
 
+app.use(verifyUser);
 
 //------TODO ENDPOINTS ------ //
 app.post('/todo', handlePostTodo);
 app.delete('/todo/:id', handleDeleteTodo)
 app.put('/todo/:id', handleUpdateTodo);
-app.use(verifyUser);
 
 //------USER ENDPOINTS ------ //
 app.post('/user', async (req, res) => {
